@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username     String   @unique
+  name      String
+  password  String
+  role      Role
+  createdAt DateTime @default(now())
+  submissions Submission[]
+  assignments Assignment[] @relation("teacherAssignments")
+
+  @@map("user")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+model Assignment {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  dueDate     DateTime
+  status      AssignmentStatus @default(DRAFT)
+  createdById Int
+  createdBy   User      @relation("teacherAssignments", fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+  submissions Submission[]
+
+  @@map("assignment")
+  @@index([status])
+  @@index([createdById])
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PUBLISHED
+  COMPLETED
+}
+
+model Submission {
+  id           Int      @id @default(autoincrement())
+  assignmentId Int
+  studentId    Int
+  answer       String
+  submittedAt  DateTime @default(now())
+  reviewed     Boolean  @default(false)
+  reviewNote   String?
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id])
+  student    User       @relation(fields: [studentId], references: [id])
+
+  @@map("submission")
+  @@unique([assignmentId, studentId])
+  @@index([assignmentId])
+  @@index([studentId])
+}
