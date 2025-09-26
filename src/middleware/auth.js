@@ -3,7 +3,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    console.log("Auth Header:", authHeader);
 
     const token = authHeader && authHeader.split(' ')[1];
 

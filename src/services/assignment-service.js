@@ -39,9 +39,7 @@ export const deleteAssignmentService = async (id, teacherId) => {
 }
 
 export const publishAssignmentService = async (id, teacherId) => {
-    console.log('publishAssignmentService', typeof id, teacherId);
     const existing = await prisma.assignment.findFirst({ where: { id: id } });
-    console.log('existing', existing);
     if (!existing) {
         return 'Not found';
     }
@@ -155,6 +153,7 @@ export const getSubmissionsForAssignmentService = async (id, userId) => {
 
 export const addMarksForAssignmentService = async (id, sid, reviewed = true, reviewNote, userId) => {
     const assignment = await prisma.assignment.findUnique({ where: { id } });
+
     if (!assignment) {
         return 'Not found';
     }
@@ -162,6 +161,18 @@ export const addMarksForAssignmentService = async (id, sid, reviewed = true, rev
         return 'Forbidden';
     }
 
-    const updated = await prisma.submission.update({ where: { id: sid }, data: { reviewed, reviewNote } });
+    const updated = await prisma.submission.update({
+        where: {
+            assignmentId_studentId: {
+                assignmentId: id,
+                studentId: sid
+            }
+        },
+        data: {
+            reviewed: reviewed,
+            reviewNote: reviewNote
+        }
+    });
+
     return updated;
 }

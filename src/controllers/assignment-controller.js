@@ -100,13 +100,10 @@ export const getAllAssignments = async (req, res) => {
 }
 
 export const getAssignmentDetails = async (req, res) => {
-    console.log('getAssignmentDetails called');
     const id = Number(req.params.id);
     const role = req.user.role;
     const studentId = req.user.id;
-    console.log('Params:', req.params, 'User:', req.user);
     const result = await getAssignmentDetailService(id, studentId, role);
-    console.log('Result:', result);
     if (result === 'Forbidden') {
         return res.status(403).json({ error: 'Forbidden' });
     }
@@ -159,10 +156,10 @@ export const getSubmissionsForAssignment = async (req, res) => {
 }
 
 export const addMarksForAssignment = async (req, res) => {
-    const id = Number(req.params.id);
+    const assignmentId = Number(req.params.id);
     const sid = Number(req.params.sid);
     const { reviewed = true, reviewNote } = req.body;
-    const updated = await addMarksForAssignmentService(id, sid, reviewed, reviewNote, req.user.id);
+    const updated = await addMarksForAssignmentService(assignmentId, sid, reviewed, reviewNote, req.user.id);
     if (updated === 'Not found') {
         return res.status(404).json({ error: 'Not found' });
     }
