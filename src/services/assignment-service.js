@@ -176,3 +176,17 @@ export const addMarksForAssignmentService = async (id, sid, reviewed = true, rev
 
     return updated;
 }
+
+export const getReviewedAssignmentsService = async (studentId) => {
+    const submissions = await prisma.submission.findMany({
+        where: {
+            studentId: studentId,
+            reviewed: true
+        },
+        include: {
+            assignment: true
+
+        }
+    });
+    return submissions;
+}

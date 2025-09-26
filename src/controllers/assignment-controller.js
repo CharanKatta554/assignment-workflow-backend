@@ -9,7 +9,8 @@ import {
     listPublishedAssignmentsService,
     submitAssignmentService,
     getSubmissionsForAssignmentService,
-    addMarksForAssignmentService
+    addMarksForAssignmentService,
+    getReviewedAssignmentsService,
 } from '../services/assignment-service.js';
 
 export const createAssignment = async (req, res) => {
@@ -167,4 +168,13 @@ export const addMarksForAssignment = async (req, res) => {
         return res.status(403).json({ error: 'Forbidden' });
     }
     return res.json(updated);
+}
+
+export const getReviewedAssignments = async (req, res) => {
+    const studentId = req.user.id;
+    const result = await getReviewedAssignmentsService(studentId);
+    if (result === 'Not found') {
+        return res.status(404).json({ error: 'Not found' });
+    };
+    return res.json(result);
 }

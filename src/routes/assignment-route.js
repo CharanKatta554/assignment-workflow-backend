@@ -11,7 +11,8 @@ import {
   listPublishedAssignments,
   submitAssignment,
   getSubmissionsForAssignment,
-  addMarksForAssignment
+  addMarksForAssignment,
+  getReviewedAssignments,
 } from '../controllers/assignment-controller.js';
 
 const router = express.Router();
@@ -27,6 +28,8 @@ router.post('/:id/publish', authenticateToken, authorizeRoles('TEACHER'), publis
 router.post('/:id/complete', authenticateToken, authorizeRoles('TEACHER'), updateAssignmentStatus);
 
 router.get('/', authenticateToken, authorizeRoles('TEACHER'), getAllAssignments);
+
+router.get('/getReviewedAssignments', authenticateToken, authorizeRoles('STUDENT'),getReviewedAssignments);
 
 router.get('/:id', authenticateToken, getAssignmentDetails);
 
